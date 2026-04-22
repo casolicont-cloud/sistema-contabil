@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Contábil Pro - Fluxo de Trabalho</title>
+    <style>
+        :root {
+            --primary: #2c3e50; --secondary: #27ae60; --accent: #3498db;
+            --danger: #e74c3c; --warning: #f39c12; --light: #f4f7f6;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 1200px; margin: auto; }
+
+        /* Dashboard */
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center; border-bottom: 4px solid var(--primary); }
+        .card .value { font-size: 24px; font-weight: bold; display: block; margin-top: 5px; }
+        .c-pendente { border-color: var(--danger); }
+        .c-andamento { border-color: var(--warning); }
+        .c-concluido { border-color: var(--secondary); }
+
+        /* Formulário */
+        .form-container { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); margin-bottom: 30px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .full-width { grid-column: 1 / -1; }
+        
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; color: #555; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        
+        .hidden { display: none; }
+        .btn-salvar { background: var(--primary); color: white; border: none; padding: 15px 30px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 15px; width: 100%; transition: 0.2s; }
+        .btn-salvar:hover { background: #1a252f; }
+
+        /* Tabs e Tabela */
+        .tabs { border-bottom: 2px solid #ddd; margin-bottom: 20px; }
+        .tab-btn { padding: 10px 20px; border: none; background: none; cursor: pointer; font-weight: bold; color: #7f8c8d; }
+        .tab-btn.active { color: var(--accent); border-bottom: 3px solid var(--accent); }
+
+        table { width: 100%; background: white; border-collapse: collapse; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+        th { background: #f8f9fa; }
+
+        /* Status Badges */
+        .badge { padding: 5px 10px; border-radius: 15px; font-size: 11px; font-weight: bold; }
+        .b-pendente { background: #ffdada; color: #a94442; }
+        .b-andamento { background: #fff3cd; color: #856404; }
+        .b-concluido { background: #d4edda; color: #155724; }
+        
+        .small-info { font-size: 12px; color: #7f8c8d; display: block; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🚀 Gestão Contábil: Solicitações e Rotinas</h2>
+
+    <div class="dashboard">
+        <div class="card">Total <span class="value" id="d-total">0</span></div>
+        <div class="card c-pendente">Pendentes <span class="value" id="d-pendente">0</span></div>
+        <div class="card c-andamento">Em Andamento <span class="value" id="d-andamento">0</span></div>
+        <div class="card c-concluido">Concluídos <span class="value" id="d-concluido">0</span></div>
+    </div>
+
+    <div class="form-container">
+        <div class="form-grid">
+            <div>
+                <label>Tipo de Entrada</label>
+                <select id="tipo" onchange="toggleReuniao()">
+                    <option value="Solicitação">Solicitação</option>
+                    <option value="Rotina Diária">Rotina Diária</option>
+                    <option value="Reunião">Reunião</option>
+                </select>
+            </div>
+            <div>
+                <label>Cliente</label>
+                <input type="text" id="cliente" placeholder="Ex: Metalúrgica Silva">
+            </div>
+            <div>
+                <label>Departamento</label>
+                <select id="depto">
+                    <option value="Fiscal">Fiscal</option>
+                    <option value="Contábil">Contábil</option>
+                    <option value="Pessoal/RH">Pessoal / RH</option>
+                    <option value="Legalização">Legalização / Societário</option>
+                </select>
+            </div>
+            <div>
+                <label>Data</label>
+                <input type="date" id="data">
+            </div>
+            <div>
+                <label>Meio de Solicitação/Entrega</label>
+                <select id="meio" onchange="toggleOutro()">
+                    <option value="WhatsApp">WhatsApp</option>
+                    <option value="E-mail">E-mail</option>
+                    <option value="Presencial">Presencial</option>
+                    <option value="Outro">Outro (Descrever)</option>
+                </select>
+            </div>
+            <div id="campo-outro" class="hidden">
+                <label>Descreva o Meio</label>
+                <input type="text" id="meio-detalhe" placeholder="Qual outro meio?">
+            </div>
+            <div id="campo-reuniao" class="hidden full-width">
+                <label>Link ou Local da Reunião</label>
+                <input type="text" id="local" placeholder="Link do Meet/Zoom ou Endereço físico">
+            </div>
+            <div class="full-width">
+                <label>Descrição do Serviço / Pedido do Cliente</label>
+                <textarea id="descricao" rows="3" placeholder="Detalhe o que precisa ser feito..."></textarea>
+            </div>
+        </div>
+        <button class="btn-salvar" onclick="salvar()">Registrar Entrada</button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="filtrar('Todos', this)">Todos</button>
+        <button class="tab-btn" onclick="filtrar('Solicitação', this)">Solicitações</button>
+        <button class="tab-btn" onclick="filtrar('Rotina Diária', this)">Rotinas</button>
+        <button class="tab-btn" onclick="filtrar('Reunião', this)">Reuniões</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Cliente / Depto</th>
+                <th>Serviço / Detalhes</th>
+                <th>Meio / Prazo</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="tabela-corpo"></tbody>
+    </table>
+</div>
+
+<script>
+    let db = JSON.parse(localStorage.getItem('contabil_v3')) || [];
+    let filtroAtual = 'Todos';
+
+    function toggleReuniao() {
+        const tipo = document.getElementById('tipo').value;
+        document.getElementById('campo-reuniao').classList.toggle('hidden', tipo !== 'Reunião');
+    }
+
+    function toggleOutro() {
+        const meio = document.getElementById('meio').value;
+        document.getElementById('campo-outro').classList.toggle('hidden', meio !== 'Outro');
+    }
+
+    function salvar() {
+        const item = {
+            id: Date.now(),
+            tipo: document.getElementById('tipo').value,
+            cliente: document.getElementById('cliente').value,
+            depto: document.getElementById('depto').value,
+            data: document.getElementById('data').value,
+            meio: document.getElementById('meio').value === 'Outro' ? document.getElementById('meio-detalhe').value : document.getElementById('meio').value,
+            local: document.getElementById('local').value,
+            descricao: document.getElementById('descricao').value,
+            status: 'Pendente'
+        };
+
+        if(!item.cliente || !item.data) return alert("Preencha Cliente e Data!");
+
+        db.push(item);
+        localStorage.setItem('contabil_v3', JSON.stringify(db));
+        render();
+        limparCampos();
+    }
+
+    function atualizarStatus(id) {
+        const item = db.find(i => i.id === id);
+        if (item.status === 'Pendente') item.status = 'Em Andamento';
+        else if (item.status === 'Em Andamento') item.status = 'Concluído';
+        else item.status = 'Pendente';
+        
+        localStorage.setItem('contabil_v3', JSON.stringify(db));
+        render();
+    }
+
+    function excluir(id) {
+        if(confirm("Excluir registro?")) {
+            db = db.filter(i => i.id !== id);
+            localStorage.setItem('contabil_v3', JSON.stringify(db));
+            render();
+        }
+    }
+
+    function filtrar(tipo, btn) {
+        filtroAtual = tipo;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render();
+    }
+
+    function render() {
+        const corpo = document.getElementById('tabela-corpo');
+        corpo.innerHTML = '';
+        
+        // Dashboard
+        document.getElementById('d-total').innerText = db.length;
+        document.getElementById('d-pendente').innerText = db.filter(i => i.status === 'Pendente').length;
+        document.getElementById('d-andamento').innerText = db.filter(i => i.status === 'Em Andamento').length;
+        document.getElementById('d-concluido').innerText = db.filter(i => i.status === 'Concluído').length;
+
+        const lista = filtroAtual === 'Todos' ? db : db.filter(i => i.tipo === filtroAtual);
+
+        lista.forEach(i => {
+            const sClass = i.status === 'Pendente' ? 'b-pendente' : i.status === 'Em Andamento' ? 'b-andamento' : 'b-concluido';
+            corpo.innerHTML += `
+                <tr>
+                    <td>
+                        <strong>${i.cliente}</strong>
+                        <span class="small-info">${i.depto} | ${i.tipo}</span>
+                    </td>
+                    <td>
+                        ${i.descricao}
+                        ${i.tipo === 'Reunião' ? `<span class="small-info">📍 ${i.local}</span>` : ''}
+                    </td>
+                    <td>
+                        ${i.data.split('-').reverse().join('/')}
+                        <span class="small-info">📩 ${i.meio}</span>
+                    </td>
+                    <td><span class="badge ${sClass}">${i.status}</span></td>
+                    <td>
+                        <button onclick="atualizarStatus(${i.id})" title="Mudar Status" style="cursor:pointer">🔄</button>
+                        <button onclick="excluir(${i.id})" title="Excluir" style="cursor:pointer">🗑️</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function limparCampos() {
+        document.getElementById('cliente').value = '';
+        document.getElementById('descricao').value = '';
+        document.getElementById('local').value = '';
+        document.getElementById('meio-detalhe').value = '';
+    }
+
+    render();
+</script>
+
+</body>
+</html>
