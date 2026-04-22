@@ -2,144 +2,577 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Contábil Pro - Fluxo de Trabalho</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Sistema Contábil Pro - Gestão Completa</title>
     <style>
         :root {
-            --primary: #2c3e50; --secondary: #27ae60; --accent: #3498db;
-            --danger: #e74c3c; --warning: #f39c12; --light: #f4f7f6;
+            --primary: #2c3e50;
+            --secondary: #27ae60;
+            --accent: #3498db;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #f4f7f6;
+            --dark: #2c3e50;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 1200px; margin: auto; }
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        /* Header com abas principais */
+        .main-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .main-tab-btn {
+            padding: 12px 24px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            color: #7f8c8d;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .main-tab-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .main-tab-btn:hover:not(.active) {
+            background: #ecf0f1;
+        }
 
         /* Dashboard */
-        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center; border-bottom: 4px solid var(--primary); }
-        .card .value { font-size: 24px; font-weight: bold; display: block; margin-top: 5px; }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            text-align: center;
+            border-bottom: 4px solid var(--primary);
+        }
+
+        .card .value {
+            font-size: 24px;
+            font-weight: bold;
+            display: block;
+            margin-top: 5px;
+        }
+
         .c-pendente { border-color: var(--danger); }
         .c-andamento { border-color: var(--warning); }
         .c-concluido { border-color: var(--secondary); }
 
         /* Formulário */
-        .form-container { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); margin-bottom: 30px; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
-        .full-width { grid-column: 1 / -1; }
-        
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; color: #555; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-        
-        .hidden { display: none; }
-        .btn-salvar { background: var(--primary); color: white; border: none; padding: 15px 30px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 15px; width: 100%; transition: 0.2s; }
-        .btn-salvar:hover { background: #1a252f; }
+        .form-container, .panel-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
 
-        /* Tabs e Tabela */
-        .tabs { border-bottom: 2px solid #ddd; margin-bottom: 20px; }
-        .tab-btn { padding: 10px 20px; border: none; background: none; cursor: pointer; font-weight: bold; color: #7f8c8d; }
-        .tab-btn.active { color: var(--accent); border-bottom: 3px solid var(--accent); }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
 
-        table { width: 100%; background: white; border-collapse: collapse; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
-        th { background: #f8f9fa; }
+        .full-width {
+            grid-column: 1 / -1;
+        }
 
-        /* Status Badges */
-        .badge { padding: 5px 10px; border-radius: 15px; font-size: 11px; font-weight: bold; }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 13px;
+            color: #555;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .btn-salvar, .btn-cadastrar {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 15px;
+            width: 100%;
+            transition: 0.2s;
+        }
+
+        .btn-salvar:hover, .btn-cadastrar:hover {
+            background: #1a252f;
+        }
+
+        .btn-secondary {
+            background: var(--accent);
+        }
+
+        .btn-secondary:hover {
+            background: #2980b9;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        /* Tabs secundárias */
+        .tabs {
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: bold;
+            color: #7f8c8d;
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+            border-bottom: 3px solid var(--accent);
+        }
+
+        /* Tabelas */
+        .table-wrapper {
+            overflow-x: auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        /* Badges */
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
         .b-pendente { background: #ffdada; color: #a94442; }
         .b-andamento { background: #fff3cd; color: #856404; }
         .b-concluido { background: #d4edda; color: #155724; }
-        
-        .small-info { font-size: 12px; color: #7f8c8d; display: block; }
+
+        .small-info {
+            font-size: 11px;
+            color: #95a5a6;
+            display: block;
+            margin-top: 4px;
+        }
+
+        /* Botões de ação */
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px 8px;
+            margin: 0 3px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #f0f0f0;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-modal {
+            cursor: pointer;
+            font-size: 24px;
+            color: #999;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .card .value { font-size: 20px; }
+            th, td { padding: 8px 10px; font-size: 12px; }
+            .main-tab-btn { padding: 8px 16px; font-size: 14px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>🚀 Gestão Contábil: Solicitações e Rotinas</h2>
+    <h2>🚀 Gestão Contábil - Sistema Completo</h2>
 
-    <div class="dashboard">
-        <div class="card">Total <span class="value" id="d-total">0</span></div>
-        <div class="card c-pendente">Pendentes <span class="value" id="d-pendente">0</span></div>
-        <div class="card c-andamento">Em Andamento <span class="value" id="d-andamento">0</span></div>
-        <div class="card c-concluido">Concluídos <span class="value" id="d-concluido">0</span></div>
+    <!-- Abas principais -->
+    <div class="main-tabs">
+        <button class="main-tab-btn active" onclick="mudarAbaPrincipal('solicitacoes', this)">📋 Solicitações</button>
+        <button class="main-tab-btn" onclick="mudarAbaPrincipal('departamentos', this)">🏢 Departamentos</button>
+        <button class="main-tab-btn" onclick="mudarAbaPrincipal('usuarios', this)">👥 Usuários</button>
     </div>
 
-    <div class="form-container">
-        <div class="form-grid">
-            <div>
-                <label>Tipo de Entrada</label>
-                <select id="tipo" onchange="toggleReuniao()">
-                    <option value="Solicitação">Solicitação</option>
-                    <option value="Rotina Diária">Rotina Diária</option>
-                    <option value="Reunião">Reunião</option>
-                </select>
+    <!-- Painel de Solicitações -->
+    <div id="panel-solicitacoes">
+        <div class="dashboard">
+            <div class="card">Total <span class="value" id="d-total">0</span></div>
+            <div class="card c-pendente">Pendentes <span class="value" id="d-pendente">0</span></div>
+            <div class="card c-andamento">Em Andamento <span class="value" id="d-andamento">0</span></div>
+            <div class="card c-concluido">Concluídos <span class="value" id="d-concluido">0</span></div>
+        </div>
+
+        <div class="form-container">
+            <h3>➕ Nova Solicitação</h3>
+            <div class="form-grid">
+                <div>
+                    <label>Tipo de Entrada</label>
+                    <select id="tipo" onchange="toggleReuniao()">
+                        <option value="Solicitação">📝 Solicitação</option>
+                        <option value="Rotina Diária">🔄 Rotina Diária</option>
+                        <option value="Reunião">🎯 Reunião</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Cliente</label>
+                    <input type="text" id="cliente" placeholder="Ex: Metalúrgica Silva">
+                </div>
+                <div>
+                    <label>Departamento</label>
+                    <select id="depto">
+                        <option value="">Selecione um departamento</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Responsável / Usuário</label>
+                    <select id="usuario">
+                        <option value="">Selecione um usuário</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Data</label>
+                    <input type="date" id="data">
+                </div>
+                <div>
+                    <label>Meio de Solicitação</label>
+                    <select id="meio" onchange="toggleOutro()">
+                        <option value="WhatsApp">📱 WhatsApp</option>
+                        <option value="E-mail">✉️ E-mail</option>
+                        <option value="Presencial">🏢 Presencial</option>
+                        <option value="Telefone">📞 Telefone</option>
+                        <option value="Outro">🔄 Outro</option>
+                    </select>
+                </div>
+                <div id="campo-outro" class="hidden">
+                    <label>Descreva o Meio</label>
+                    <input type="text" id="meio-detalhe" placeholder="Qual outro meio?">
+                </div>
+                <div id="campo-reuniao" class="hidden full-width">
+                    <label>🔗 Link ou Local da Reunião</label>
+                    <input type="text" id="local" placeholder="Link do Meet/Zoom ou Endereço físico">
+                </div>
+                <div class="full-width">
+                    <label>📋 Descrição do Serviço / Pedido</label>
+                    <textarea id="descricao" rows="3" placeholder="Detalhe o que precisa ser feito..."></textarea>
+                </div>
             </div>
-            <div>
-                <label>Cliente</label>
-                <input type="text" id="cliente" placeholder="Ex: Metalúrgica Silva">
-            </div>
-            <div>
-                <label>Departamento</label>
-                <select id="depto">
-                    <option value="Fiscal">Fiscal</option>
-                    <option value="Contábil">Contábil</option>
-                    <option value="Pessoal/RH">Pessoal / RH</option>
-                    <option value="Legalização">Legalização / Societário</option>
-                </select>
-            </div>
-            <div>
-                <label>Data</label>
-                <input type="date" id="data">
-            </div>
-            <div>
-                <label>Meio de Solicitação/Entrega</label>
-                <select id="meio" onchange="toggleOutro()">
-                    <option value="WhatsApp">WhatsApp</option>
-                    <option value="E-mail">E-mail</option>
-                    <option value="Presencial">Presencial</option>
-                    <option value="Outro">Outro (Descrever)</option>
-                </select>
-            </div>
-            <div id="campo-outro" class="hidden">
-                <label>Descreva o Meio</label>
-                <input type="text" id="meio-detalhe" placeholder="Qual outro meio?">
-            </div>
-            <div id="campo-reuniao" class="hidden full-width">
-                <label>Link ou Local da Reunião</label>
-                <input type="text" id="local" placeholder="Link do Meet/Zoom ou Endereço físico">
-            </div>
-            <div class="full-width">
-                <label>Descrição do Serviço / Pedido do Cliente</label>
-                <textarea id="descricao" rows="3" placeholder="Detalhe o que precisa ser feito..."></textarea>
+            <button class="btn-salvar" onclick="salvarSolicitacao()">💾 Registrar Solicitação</button>
+        </div>
+
+        <div class="toolbar">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="filtrar('Todos', this)">📋 Todos</button>
+                <button class="tab-btn" onclick="filtrar('Solicitação', this)">📝 Solicitações</button>
+                <button class="tab-btn" onclick="filtrar('Rotina Diária', this)">🔄 Rotinas</button>
+                <button class="tab-btn" onclick="filtrar('Reunião', this)">🎯 Reuniões</button>
             </div>
         </div>
-        <button class="btn-salvar" onclick="salvar()">Registrar Entrada</button>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cliente / Depto</th>
+                        <th>Responsável</th>
+                        <th>Serviço / Detalhes</th>
+                        <th>Meio / Prazo</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-corpo"></tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="filtrar('Todos', this)">Todos</button>
-        <button class="tab-btn" onclick="filtrar('Solicitação', this)">Solicitações</button>
-        <button class="tab-btn" onclick="filtrar('Rotina Diária', this)">Rotinas</button>
-        <button class="tab-btn" onclick="filtrar('Reunião', this)">Reuniões</button>
+    <!-- Painel de Departamentos -->
+    <div id="panel-departamentos" class="hidden">
+        <div class="panel-container">
+            <h3>🏢 Cadastro de Departamentos</h3>
+            <div class="form-grid">
+                <div class="full-width">
+                    <label>Nome do Departamento</label>
+                    <input type="text" id="novo-depto-nome" placeholder="Ex: Financeiro, Comercial, TI">
+                </div>
+                <div class="full-width">
+                    <label>Descrição</label>
+                    <input type="text" id="novo-depto-desc" placeholder="Descrição do departamento">
+                </div>
+            </div>
+            <button class="btn-cadastrar" onclick="cadastrarDepartamento()">➕ Cadastrar Departamento</button>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Data Criação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-deptos"></tbody>
+            </table>
+        </div>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Cliente / Depto</th>
-                <th>Serviço / Detalhes</th>
-                <th>Meio / Prazo</th>
-                <th>Status</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody id="tabela-corpo"></tbody>
-    </table>
+    <!-- Painel de Usuários -->
+    <div id="panel-usuarios" class="hidden">
+        <div class="panel-container">
+            <h3>👥 Cadastro de Usuários</h3>
+            <div class="form-grid">
+                <div>
+                    <label>Nome Completo</label>
+                    <input type="text" id="novo-usuario-nome" placeholder="Ex: João Silva">
+                </div>
+                <div>
+                    <label>E-mail</label>
+                    <input type="email" id="novo-usuario-email" placeholder="joao@empresa.com">
+                </div>
+                <div>
+                    <label>Departamento</label>
+                    <select id="novo-usuario-depto">
+                        <option value="">Selecione um departamento</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Cargo</label>
+                    <input type="text" id="novo-usuario-cargo" placeholder="Ex: Analista Contábil">
+                </div>
+            </div>
+            <button class="btn-cadastrar" onclick="cadastrarUsuario()">➕ Cadastrar Usuário</button>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Departamento</th>
+                        <th>Cargo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-usuarios"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Visualização/Edição -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modal-title">Visualizar</h3>
+            <span class="close-modal" onclick="fecharModal()">&times;</span>
+        </div>
+        <div id="modal-body"></div>
+        <button class="btn-salvar" id="modal-save-btn" onclick="salvarEdicao()">Salvar Alterações</button>
+    </div>
 </div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('contabil_v3')) || [];
+    // ==================== ESTRUTURAS DE DADOS ====================
+    let solicitacoes = JSON.parse(localStorage.getItem('solicitacoes_v4')) || [];
+    let departamentos = JSON.parse(localStorage.getItem('departamentos_v4')) || [];
+    let usuarios = JSON.parse(localStorage.getItem('usuarios_v4')) || [];
+    
     let filtroAtual = 'Todos';
+    let abaPrincipal = 'solicitacoes';
+    let editandoTipo = null; // 'departamento' ou 'usuario'
+    let editandoId = null;
 
+    // Dados de exemplo iniciais se estiver vazio
+    if (departamentos.length === 0) {
+        departamentos = [
+            { id: 1, nome: "Fiscal", descricao: "Departamento Fiscal", dataCriacao: new Date().toISOString() },
+            { id: 2, nome: "Contábil", descricao: "Departamento Contábil", dataCriacao: new Date().toISOString() },
+            { id: 3, nome: "Pessoal/RH", descricao: "Recursos Humanos", dataCriacao: new Date().toISOString() },
+            { id: 4, nome: "Legalização", descricao: "Departamento Societário", dataCriacao: new Date().toISOString() }
+        ];
+        localStorage.setItem('departamentos_v4', JSON.stringify(departamentos));
+    }
+
+    if (usuarios.length === 0) {
+        usuarios = [
+            { id: 1, nome: "Ana Oliveira", email: "ana@contabil.com", depto: "Contábil", cargo: "Coordenadora" },
+            { id: 2, nome: "Carlos Santos", email: "carlos@contabil.com", depto: "Fiscal", cargo: "Analista" }
+        ];
+        localStorage.setItem('usuarios_v4', JSON.stringify(usuarios));
+    }
+
+    // ==================== FUNÇÕES DE INICIALIZAÇÃO ====================
+    function carregarSelects() {
+        // Carregar departamentos no select da solicitação
+        const deptoSelect = document.getElementById('depto');
+        deptoSelect.innerHTML = '<option value="">Selecione um departamento</option>';
+        departamentos.forEach(d => {
+            deptoSelect.innerHTML += `<option value="${d.nome}">${d.nome}</option>`;
+        });
+
+        // Carregar usuários no select da solicitação
+        const usuarioSelect = document.getElementById('usuario');
+        usuarioSelect.innerHTML = '<option value="">Selecione um usuário</option>';
+        usuarios.forEach(u => {
+            usuarioSelect.innerHTML += `<option value="${u.nome}">${u.nome} (${u.depto})</option>`;
+        });
+
+        // Carregar departamentos no select de novo usuário
+        const deptoUsuarioSelect = document.getElementById('novo-usuario-depto');
+        deptoUsuarioSelect.innerHTML = '<option value="">Selecione um departamento</option>';
+        departamentos.forEach(d => {
+            deptoUsuarioSelect.innerHTML += `<option value="${d.nome}">${d.nome}</option>`;
+        });
+    }
+
+    function renderizarTudo() {
+        renderizarSolicitacoes();
+        renderizarDepartamentos();
+        renderizarUsuarios();
+        carregarSelects();
+    }
+
+    // ==================== SOLICITAÇÕES ====================
     function toggleReuniao() {
         const tipo = document.getElementById('tipo').value;
         document.getElementById('campo-reuniao').classList.toggle('hidden', tipo !== 'Reunião');
@@ -150,98 +583,411 @@
         document.getElementById('campo-outro').classList.toggle('hidden', meio !== 'Outro');
     }
 
-    function salvar() {
+    function salvarSolicitacao() {
         const item = {
             id: Date.now(),
             tipo: document.getElementById('tipo').value,
             cliente: document.getElementById('cliente').value,
             depto: document.getElementById('depto').value,
+            usuario: document.getElementById('usuario').value,
             data: document.getElementById('data').value,
             meio: document.getElementById('meio').value === 'Outro' ? document.getElementById('meio-detalhe').value : document.getElementById('meio').value,
             local: document.getElementById('local').value,
             descricao: document.getElementById('descricao').value,
-            status: 'Pendente'
+            status: 'Pendente',
+            dataCriacao: new Date().toISOString()
         };
 
-        if(!item.cliente || !item.data) return alert("Preencha Cliente e Data!");
+        if(!item.cliente || !item.data) return alert("❌ Preencha Cliente e Data!");
+        if(!item.depto) return alert("❌ Selecione um Departamento!");
+        if(!item.usuario) return alert("❌ Selecione um Usuário responsável!");
 
-        db.push(item);
-        localStorage.setItem('contabil_v3', JSON.stringify(db));
-        render();
-        limparCampos();
+        solicitacoes.push(item);
+        localStorage.setItem('solicitacoes_v4', JSON.stringify(solicitacoes));
+        renderizarSolicitacoes();
+        limparCamposSolicitacao();
+        alert("✅ Solicitação registrada com sucesso!");
     }
 
     function atualizarStatus(id) {
-        const item = db.find(i => i.id === id);
+        const item = solicitacoes.find(i => i.id === id);
         if (item.status === 'Pendente') item.status = 'Em Andamento';
         else if (item.status === 'Em Andamento') item.status = 'Concluído';
         else item.status = 'Pendente';
         
-        localStorage.setItem('contabil_v3', JSON.stringify(db));
-        render();
+        localStorage.setItem('solicitacoes_v4', JSON.stringify(solicitacoes));
+        renderizarSolicitacoes();
     }
 
-    function excluir(id) {
-        if(confirm("Excluir registro?")) {
-            db = db.filter(i => i.id !== id);
-            localStorage.setItem('contabil_v3', JSON.stringify(db));
-            render();
+    function excluirSolicitacao(id) {
+        if(confirm("⚠️ Excluir esta solicitação?")) {
+            solicitacoes = solicitacoes.filter(i => i.id !== id);
+            localStorage.setItem('solicitacoes_v4', JSON.stringify(solicitacoes));
+            renderizarSolicitacoes();
         }
     }
 
     function filtrar(tipo, btn) {
         filtroAtual = tipo;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('#panel-solicitacoes .tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        render();
+        renderizarSolicitacoes();
     }
 
-    function render() {
+    function renderizarSolicitacoes() {
         const corpo = document.getElementById('tabela-corpo');
+        if (!corpo) return;
+        
         corpo.innerHTML = '';
         
         // Dashboard
-        document.getElementById('d-total').innerText = db.length;
-        document.getElementById('d-pendente').innerText = db.filter(i => i.status === 'Pendente').length;
-        document.getElementById('d-andamento').innerText = db.filter(i => i.status === 'Em Andamento').length;
-        document.getElementById('d-concluido').innerText = db.filter(i => i.status === 'Concluído').length;
+        document.getElementById('d-total').innerText = solicitacoes.length;
+        document.getElementById('d-pendente').innerText = solicitacoes.filter(i => i.status === 'Pendente').length;
+        document.getElementById('d-andamento').innerText = solicitacoes.filter(i => i.status === 'Em Andamento').length;
+        document.getElementById('d-concluido').innerText = solicitacoes.filter(i => i.status === 'Concluído').length;
 
-        const lista = filtroAtual === 'Todos' ? db : db.filter(i => i.tipo === filtroAtual);
+        const lista = filtroAtual === 'Todos' ? solicitacoes : solicitacoes.filter(i => i.tipo === filtroAtual);
+
+        if(lista.length === 0) {
+            corpo.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px;">📭 Nenhuma solicitação encontrada</td></tr>';
+            return;
+        }
 
         lista.forEach(i => {
             const sClass = i.status === 'Pendente' ? 'b-pendente' : i.status === 'Em Andamento' ? 'b-andamento' : 'b-concluido';
+            const statusIcon = i.status === 'Pendente' ? '⏳' : i.status === 'Em Andamento' ? '🔄' : '✅';
+            let dataFormatada = i.data;
+            if (i.data && i.data.includes('-')) {
+                const partes = i.data.split('-');
+                dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
+            }
+            
             corpo.innerHTML += `
                 <tr>
                     <td>
-                        <strong>${i.cliente}</strong>
-                        <span class="small-info">${i.depto} | ${i.tipo}</span>
+                        <strong>${escapeHtml(i.cliente)}</strong>
+                        <span class="small-info">${escapeHtml(i.depto)} | ${escapeHtml(i.tipo)}</span>
                     </td>
                     <td>
-                        ${i.descricao}
-                        ${i.tipo === 'Reunião' ? `<span class="small-info">📍 ${i.local}</span>` : ''}
+                        <strong>${escapeHtml(i.usuario || 'Não atribuído')}</strong>
                     </td>
                     <td>
-                        ${i.data.split('-').reverse().join('/')}
-                        <span class="small-info">📩 ${i.meio}</span>
+                        ${escapeHtml(i.descricao) || '-'}
+                        ${i.local ? `<span class="small-info">📍 ${escapeHtml(i.local)}</span>` : ''}
                     </td>
-                    <td><span class="badge ${sClass}">${i.status}</span></td>
                     <td>
-                        <button onclick="atualizarStatus(${i.id})" title="Mudar Status" style="cursor:pointer">🔄</button>
-                        <button onclick="excluir(${i.id})" title="Excluir" style="cursor:pointer">🗑️</button>
+                        ${dataFormatada}
+                        <span class="small-info">📩 ${escapeHtml(i.meio)}</span>
+                    </td>
+                    <td><span class="badge ${sClass}">${statusIcon} ${i.status}</span></td>
+                    <td>
+                        <button class="action-btn" onclick="atualizarStatus(${i.id})" title="Mudar Status">🔄</button>
+                        <button class="action-btn" onclick="excluirSolicitacao(${i.id})" title="Excluir">🗑️</button>
                     </td>
                 </tr>
             `;
         });
     }
 
-    function limparCampos() {
+    function limparCamposSolicitacao() {
         document.getElementById('cliente').value = '';
         document.getElementById('descricao').value = '';
         document.getElementById('local').value = '';
         document.getElementById('meio-detalhe').value = '';
+        document.getElementById('data').value = new Date().toISOString().split('T')[0];
+        document.getElementById('tipo').value = 'Solicitação';
+        document.getElementById('meio').value = 'WhatsApp';
+        document.getElementById('campo-reuniao').classList.add('hidden');
+        document.getElementById('campo-outro').classList.add('hidden');
     }
 
-    render();
+    // ==================== DEPARTAMENTOS (CRUD) ====================
+    function cadastrarDepartamento() {
+        const nome = document.getElementById('novo-depto-nome').value.trim();
+        const descricao = document.getElementById('novo-depto-desc').value.trim();
+        
+        if (!nome) return alert("❌ Informe o nome do departamento!");
+        
+        const novoDepto = {
+            id: Date.now(),
+            nome: nome,
+            descricao: descricao,
+            dataCriacao: new Date().toISOString()
+        };
+        
+        departamentos.push(novoDepto);
+        localStorage.setItem('departamentos_v4', JSON.stringify(departamentos));
+        renderizarDepartamentos();
+        carregarSelects();
+        
+        document.getElementById('novo-depto-nome').value = '';
+        document.getElementById('novo-depto-desc').value = '';
+        alert("✅ Departamento cadastrado!");
+    }
+
+    function editarDepartamento(id) {
+        const depto = departamentos.find(d => d.id === id);
+        if (!depto) return;
+        
+        editandoTipo = 'departamento';
+        editandoId = id;
+        
+        document.getElementById('modal-title').innerText = '✏️ Editar Departamento';
+        document.getElementById('modal-body').innerHTML = `
+            <label>Nome do Departamento</label>
+            <input type="text" id="edit-nome" value="${escapeHtml(depto.nome)}">
+            <label style="margin-top:15px">Descrição</label>
+            <input type="text" id="edit-desc" value="${escapeHtml(depto.descricao || '')}">
+        `;
+        document.getElementById('modal-save-btn').classList.remove('hidden');
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function visualizarDepartamento(id) {
+        const depto = departamentos.find(d => d.id === id);
+        if (!depto) return;
+        
+        editandoTipo = null;
+        document.getElementById('modal-title').innerText = '👁️ Visualizar Departamento';
+        document.getElementById('modal-body').innerHTML = `
+            <p><strong>Nome:</strong> ${escapeHtml(depto.nome)}</p>
+            <p><strong>Descrição:</strong> ${escapeHtml(depto.descricao || '-')}</p>
+            <p><strong>Data Criação:</strong> ${new Date(depto.dataCriacao).toLocaleDateString()}</p>
+        `;
+        document.getElementById('modal-save-btn').classList.add('hidden');
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function excluirDepartamento(id) {
+        if(confirm("⚠️ Excluir este departamento? Isso pode afetar usuários vinculados.")) {
+            departamentos = departamentos.filter(d => d.id !== id);
+            localStorage.setItem('departamentos_v4', JSON.stringify(departamentos));
+            renderizarDepartamentos();
+            carregarSelects();
+        }
+    }
+
+    function renderizarDepartamentos() {
+        const corpo = document.getElementById('tabela-deptos');
+        if (!corpo) return;
+        
+        if (departamentos.length === 0) {
+            corpo.innerHTML = '<tr><td colspan="5" style="text-align:center">Nenhum departamento cadastrado</td></tr>';
+            return;
+        }
+        
+        corpo.innerHTML = '';
+        departamentos.forEach(d => {
+            corpo.innerHTML += `
+                <tr>
+                    <td>${d.id}</td>
+                    <td><strong>${escapeHtml(d.nome)}</strong></td>
+                    <td>${escapeHtml(d.descricao || '-')}</td>
+                    <td>${new Date(d.dataCriacao).toLocaleDateString()}</td>
+                    <td>
+                        <button class="action-btn" onclick="visualizarDepartamento(${d.id})" title="Visualizar">👁️</button>
+                        <button class="action-btn" onclick="editarDepartamento(${d.id})" title="Editar">✏️</button>
+                        <button class="action-btn" onclick="excluirDepartamento(${d.id})" title="Excluir">🗑️</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    // ==================== USUÁRIOS (CRUD) ====================
+    function cadastrarUsuario() {
+        const nome = document.getElementById('novo-usuario-nome').value.trim();
+        const email = document.getElementById('novo-usuario-email').value.trim();
+        const depto = document.getElementById('novo-usuario-depto').value;
+        const cargo = document.getElementById('novo-usuario-cargo').value.trim();
+        
+        if (!nome) return alert("❌ Informe o nome do usuário!");
+        if (!depto) return alert("❌ Selecione um departamento!");
+        
+        const novoUsuario = {
+            id: Date.now(),
+            nome: nome,
+            email: email,
+            depto: depto,
+            cargo: cargo,
+            dataCriacao: new Date().toISOString()
+        };
+        
+        usuarios.push(novoUsuario);
+        localStorage.setItem('usuarios_v4', JSON.stringify(usuarios));
+        renderizarUsuarios();
+        carregarSelects();
+        
+        document.getElementById('novo-usuario-nome').value = '';
+        document.getElementById('novo-usuario-email').value = '';
+        document.getElementById('novo-usuario-cargo').value = '';
+        alert("✅ Usuário cadastrado!");
+    }
+
+    function editarUsuario(id) {
+        const usuario = usuarios.find(u => u.id === id);
+        if (!usuario) return;
+        
+        editandoTipo = 'usuario';
+        editandoId = id;
+        
+        // Opções de departamento para o select
+        let deptosOptions = '<option value="">Selecione um departamento</option>';
+        departamentos.forEach(d => {
+            const selected = d.nome === usuario.depto ? 'selected' : '';
+            deptosOptions += `<option value="${d.nome}" ${selected}>${d.nome}</option>`;
+        });
+        
+        document.getElementById('modal-title').innerText = '✏️ Editar Usuário';
+        document.getElementById('modal-body').innerHTML = `
+            <label>Nome Completo</label>
+            <input type="text" id="edit-nome" value="${escapeHtml(usuario.nome)}">
+            <label style="margin-top:15px">E-mail</label>
+            <input type="email" id="edit-email" value="${escapeHtml(usuario.email || '')}">
+            <label style="margin-top:15px">Departamento</label>
+            <select id="edit-depto">${deptosOptions}</select>
+            <label style="margin-top:15px">Cargo</label>
+            <input type="text" id="edit-cargo" value="${escapeHtml(usuario.cargo || '')}">
+        `;
+        document.getElementById('modal-save-btn').classList.remove('hidden');
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function visualizarUsuario(id) {
+        const usuario = usuarios.find(u => u.id === id);
+        if (!usuario) return;
+        
+        editandoTipo = null;
+        document.getElementById('modal-title').innerText = '👁️ Visualizar Usuário';
+        document.getElementById('modal-body').innerHTML = `
+            <p><strong>Nome:</strong> ${escapeHtml(usuario.nome)}</p>
+            <p><strong>E-mail:</strong> ${escapeHtml(usuario.email || '-')}</p>
+            <p><strong>Departamento:</strong> ${escapeHtml(usuario.depto)}</p>
+            <p><strong>Cargo:</strong> ${escapeHtml(usuario.cargo || '-')}</p>
+            <p><strong>Data Cadastro:</strong> ${new Date(usuario.dataCriacao).toLocaleDateString()}</p>
+        `;
+        document.getElementById('modal-save-btn').classList.add('hidden');
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function excluirUsuario(id) {
+        if(confirm("⚠️ Excluir este usuário?")) {
+            usuarios = usuarios.filter(u => u.id !== id);
+            localStorage.setItem('usuarios_v4', JSON.stringify(usuarios));
+            renderizarUsuarios();
+            carregarSelects();
+        }
+    }
+
+    function renderizarUsuarios() {
+        const corpo = document.getElementById('tabela-usuarios');
+        if (!corpo) return;
+        
+        if (usuarios.length === 0) {
+            corpo.innerHTML = '<tr><td colspan="6" style="text-align:center">Nenhum usuário cadastrado</td></tr>';
+            return;
+        }
+        
+        corpo.innerHTML = '';
+        usuarios.forEach(u => {
+            corpo.innerHTML += `
+                <tr>
+                    <td>${u.id}</td>
+                    <td><strong>${escapeHtml(u.nome)}</strong></td>
+                    <td>${escapeHtml(u.email || '-')}</td>
+                    <td>${escapeHtml(u.depto)}</td>
+                    <td>${escapeHtml(u.cargo || '-')}</td>
+                    <td>
+                        <button class="action-btn" onclick="visualizarUsuario(${u.id})" title="Visualizar">👁️</button>
+                        <button class="action-btn" onclick="editarUsuario(${u.id})" title="Editar">✏️</button>
+                        <button class="action-btn" onclick="excluirUsuario(${u.id})" title="Excluir">🗑️</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function salvarEdicao() {
+        if (editandoTipo === 'departamento' && editandoId) {
+            const novoNome = document.getElementById('edit-nome').value.trim();
+            const novaDesc = document.getElementById('edit-desc').value.trim();
+            if (!novoNome) return alert("❌ Nome é obrigatório!");
+            
+            const index = departamentos.findIndex(d => d.id === editandoId);
+            if (index !== -1) {
+                departamentos[index].nome = novoNome;
+                departamentos[index].descricao = novaDesc;
+                localStorage.setItem('departamentos_v4', JSON.stringify(departamentos));
+                renderizarDepartamentos();
+                carregarSelects();
+                alert("✅ Departamento atualizado!");
+            }
+        }
+        else if (editandoTipo === 'usuario' && editandoId) {
+            const novoNome = document.getElementById('edit-nome').value.trim();
+            const novoEmail = document.getElementById('edit-email').value.trim();
+            const novoDepto = document.getElementById('edit-depto').value;
+            const novoCargo = document.getElementById('edit-cargo').value.trim();
+            
+            if (!novoNome) return alert("❌ Nome é obrigatório!");
+            if (!novoDepto) return alert("❌ Selecione um departamento!");
+            
+            const index = usuarios.findIndex(u => u.id === editandoId);
+            if (index !== -1) {
+                usuarios[index].nome = novoNome;
+                usuarios[index].email = novoEmail;
+                usuarios[index].depto = novoDepto;
+                usuarios[index].cargo = novoCargo;
+                localStorage.setItem('usuarios_v4', JSON.stringify(usuarios));
+                renderizarUsuarios();
+                carregarSelects();
+                alert("✅ Usuário atualizado!");
+            }
+        }
+        
+        fecharModal();
+    }
+
+    function fecharModal() {
+        document.getElementById('modal').style.display = 'none';
+        editandoTipo = null;
+        editandoId = null;
+    }
+
+    // ==================== UTILITÁRIOS ====================
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function mudarAbaPrincipal(aba, btn) {
+        abaPrincipal = aba;
+        
+        // Atualizar botões
+        document.querySelectorAll('.main-tab-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        
+        // Mostrar/esconder painéis
+        document.getElementById('panel-solicitacoes').classList.toggle('hidden', aba !== 'solicitacoes');
+        document.getElementById('panel-departamentos').classList.toggle('hidden', aba !== 'departamentos');
+        document.getElementById('panel-usuarios').classList.toggle('hidden', aba !== 'usuarios');
+        
+        if (aba === 'solicitacoes') renderizarSolicitacoes();
+        if (aba === 'departamentos') renderizarDepartamentos();
+        if (aba === 'usuarios') renderizarUsuarios();
+    }
+
+    // Inicialização
+    document.getElementById('data').value = new Date().toISOString().split('T')[0];
+    renderizarTudo();
+    
+    // Fechar modal clicando fora
+    window.onclick = function(event) {
+        const modal = document.getElementById('modal');
+        if (event.target === modal) fecharModal();
+    }
 </script>
 
 </body>
